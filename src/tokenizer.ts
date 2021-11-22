@@ -1,9 +1,9 @@
 /* eslint-disable no-cond-assign */
-import DEFAULT_ENTITIES from './default-entities';
-import { Entities } from './types';
-import * as chunks from './chunks';
-import readAttribute from './read-attribute';
-import deentify from './deentify';
+import DEFAULT_ENTITIES from './default-entities.ts';
+import { Entities } from './types.ts';
+import * as chunks from './chunks.ts';
+import readAttribute from './read-attribute.ts';
+import deentify from './deentify.ts';
 
 /**
  * Options passed to a tokenizer on instantiation.

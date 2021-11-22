@@ -1,4 +1,4 @@
-import { Entities } from './types';
+import { Entities } from './types.ts';
 
 /**
  * A large set of possible entities for use during parsing.

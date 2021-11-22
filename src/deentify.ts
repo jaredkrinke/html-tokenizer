@@ -1,4 +1,4 @@
-import * as types from './types';
+import * as types from './types.ts';
 
 const PATTERN = /&(#?)([a-z0-9]+);/ig;
 const HANDLERS = new WeakMap<types.Entities, HandlerFn>();

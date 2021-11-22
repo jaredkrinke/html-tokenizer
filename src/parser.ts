@@ -1,7 +1,7 @@
-import { Tokenizer } from './tokenizer';
-import { Entities } from './types';
-import Stack from './stack';
-import { isClosedBy, isClosedByParent, isSelfClosing } from './util';
+import { Tokenizer } from './tokenizer.ts';
+import { Entities } from './types.ts';
+import Stack from './stack.ts';
+import { isClosedBy, isClosedByParent, isSelfClosing } from './util.ts';
 
 /**
  * Options passed to a parser on instantiation.

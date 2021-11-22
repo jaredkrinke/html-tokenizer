@@ -1,4 +1,4 @@
-import { Entities } from './types';
+import { Entities } from './types.ts';
 
 const DEFAULT_ENTITIES: Entities = {
   'quot': '\u0022',
