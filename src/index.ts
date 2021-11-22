@@ -1,3 +1,2 @@
-export * from './parser.ts';
-export * from './tokenizer.ts';
-export * from './types.ts';
+export * from './parser';
+export * from './tokenizer';

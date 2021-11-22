@@ -1,15 +1,11 @@
 /* eslint-disable no-cond-assign */
-import DEFAULT_ENTITIES from './default-entities.ts';
-import { Entities } from './types.ts';
-import * as chunks from './chunks.ts';
-import readAttribute from './read-attribute.ts';
-import deentify from './deentify.ts';
+import * as chunks from './chunks';
+import readAttribute from './read-attribute';
 
 /**
  * Options passed to a tokenizer on instantiation.
  */
 export interface TokenizerOptions {
-  entities?: Entities;
 }
 
 /**
@@ -100,8 +96,6 @@ type State
  */
 export class Tokenizer {
 
-  private readonly entityMap: Entities;
-
   /**
    * Static method to tokenize HTML without instantiating a Tokenizer instance.
    * @param html HTML string to tokenize.
@@ -121,7 +115,6 @@ export class Tokenizer {
   }
 
   private constructor(opts: TokenizerOptions) {
-    this.entityMap = { ...DEFAULT_ENTITIES, ...opts.entities };
     Object.freeze(this);
   }
 
@@ -142,8 +135,7 @@ export class Tokenizer {
         }
       } else {
         if (currentText) {
-          const deentText = deentify(currentText, this.entityMap);
-          yield { type: 'text', text: deentText };
+          yield { type: 'text', text: currentText };
           currentText = undefined;
         }
         yield tkn;
@@ -206,7 +198,7 @@ export class Tokenizer {
           if (hasVal) {
             const read = readAttribute(html, pos);
             pos += read.length;
-            yield { type: 'attribute', name, value: deentify(read.value, this.entityMap) };
+            yield { type: 'attribute', name, value: read.value };
           } else {
             yield { type: 'attribute', name, value: '' };
           }
