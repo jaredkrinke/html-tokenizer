@@ -1,0 +1,10 @@
+{
+    "imports": {
+        "./src/chunks": "./src/chunks.ts",
+        "./src/parser": "./src/parser.ts",
+        "./src/read-attribute": "./src/read-attribute.ts",
+        "./src/stack": "./src/stack.ts",
+        "./src/tokenizer": "./src/tokenizer.ts",
+        "./src/util": "./src/util.ts"
+    }
+}
