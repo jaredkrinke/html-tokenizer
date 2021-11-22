@@ -1,7 +1,5 @@
 {
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
-    "source.fixAll.markDown": false
-  },
-  "eslint.run": "onType"
+    "deno.enable": true,
+    "deno.lint": true,
+    "deno.unstable": false
 }

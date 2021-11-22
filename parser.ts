@@ -1,11 +1,151 @@
-import { Tokenizer } from './tokenizer';
-import Stack from './stack';
-import { isClosedBy, isClosedByParent, isSelfClosing } from './util';
+import { Tokenizer } from './tokenizer.ts';
 
 /**
- * Options passed to a parser on instantiation.
+ * A list of tags which are self-closing in HTML.
  */
-export interface ParserOptions {
+ const SELF_CLOSING_TAGS = new Set([
+  'area',
+  'base',
+  'br',
+  'col',
+  'command',
+  'embed',
+  'hr',
+  'img',
+  'input',
+  'keygen',
+  'link',
+  'meta',
+  'param',
+  'source',
+  'track',
+  'wbr',
+]);
+
+/**
+ * A list of tags which are automatically closed
+ * when closing tags for their parents are encountered.
+ */
+const CLOSED_BY_PARENTS = new Set([
+  'p',
+  'li',
+  'dd',
+  'rb',
+  'rt',
+  'rtc',
+  'rp',
+  'optgroup',
+  'option',
+  'tbody',
+  'tfoot',
+  'tr',
+  'td',
+  'th',
+]);
+
+/**
+ * Tags which are closed when a start tag
+ * of another type ocurrs.
+ */
+const CLOSED_BY_SIBLINGS: { [tag: string]: Set<string> | undefined } = {
+  p: new Set([
+    'address',
+    'article',
+    'aside',
+    'blockquote',
+    'div',
+    'dl',
+    'fieldset',
+    'footer',
+    'form',
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'header',
+    'hgroup',
+    'hr',
+    'main',
+    'nav',
+    'ol',
+    'p',
+    'pre',
+    'section',
+    'table',
+    'ul',
+  ]),
+  li: new Set(['li']),
+  dt: new Set(['dt', 'dd']),
+  dd: new Set(['dt', 'dd']),
+  rb: new Set(['rb', 'rt', 'rtc', 'rp']),
+  rt: new Set(['rb', 'rt', 'rtc', 'rp']),
+  rtc: new Set(['rb', 'rtc', 'rp']),
+  rp: new Set(['rb', 'rt', 'rtc', 'rp']),
+  optgroup: new Set(['optgroup']),
+  option: new Set(['option', 'optgroup']),
+  thead: new Set(['tbody', 'tfoot']),
+  tbody: new Set(['tbody', 'tfoot']),
+  tfoot: new Set(['tbody']),
+  tr: new Set(['tr']),
+  td: new Set(['td', 'th']),
+  th: new Set(['td', 'th']),
+};
+
+/**
+ * Determine whether a tag is a self-closing tag.
+ */
+function isSelfClosing(tag: string): boolean {
+  return SELF_CLOSING_TAGS.has(tag);
+}
+
+/**
+ * Determine whether a tag is closed by another tag
+ */
+function isClosedBy(tag: string, otherTag: string): boolean {
+  return CLOSED_BY_SIBLINGS[tag]?.has(otherTag) ?? false;
+}
+
+/** Determine whether a tag is auto-closed by its parent. */
+function isClosedByParent(tag: string): boolean {
+  return CLOSED_BY_PARENTS.has(tag);
+}
+
+/**
+ * Mutable FILO stack object.
+ */
+ class Stack<T> {
+
+  private items: T[];
+
+  constructor() {
+    this.items = [];
+  }
+
+  push(t: T): void {
+    this.items.push(t);
+  }
+
+  pop(): T | undefined {
+    return this.items.pop();
+  }
+
+  peek(n = 0): T | undefined {
+    const idx = this.items.length + -1 + -n;
+    return this.items[idx];
+  }
+
+  size(): number {
+    return this.items.length;
+  }
+
+  *drain(): IterableIterator<T> {
+    for (let i=this.items.length; i>0; i--) {
+      yield this.items[i-1];
+    }
+    this.items.length = 0;
+  }
 }
 
 /**
@@ -83,8 +223,8 @@ export class Parser {
    * @param html HTML string to parse.
    * @param opts Optional parser configuration options.
    */
-  static parse(html: string, opts: ParserOptions = {}) {
-    const parser = new Parser(opts);
+  static parse(html: string) {
+    const parser = new Parser();
     return parser.parse(html);
   }
 
@@ -92,12 +232,12 @@ export class Parser {
    * Static factory to create a parser.
    * @param opts Parser options.
    */
-  static from(opts: ParserOptions) {
-    return new Parser(opts);
+  static from() {
+    return new Parser();
   }
 
-  private constructor(opts: ParserOptions) {
-    this.tokenizer = Tokenizer.from(opts);
+  private constructor() {
+    this.tokenizer = Tokenizer.from();
     Object.freeze(this);
   }
 
