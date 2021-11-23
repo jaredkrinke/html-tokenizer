@@ -236,6 +236,27 @@ export class Parser {
     return new Parser();
   }
 
+  /** Static method to serialize a ParseToken */
+  static serialize(token: ParseToken): string {
+    switch (token.type) {
+      case "open":
+        return `<${token.name}${
+          Object.keys(token.attributes)
+          ? Object.entries(token.attributes).map(([key, value]) => ` ${key}="${value}"`).join("")
+          : ""
+        }${token.selfClosing ? "/" : ""}>`;
+
+      case "close":
+        return  token.selfClosing ? "" : `</${token.name}>`
+
+      case "comment":
+          return `<--${token.text}-->`;
+
+      case "text":
+          return token.text;
+    }
+  }
+
   private constructor() {
     this.tokenizer = Tokenizer.from();
     Object.freeze(this);
